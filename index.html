@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PinkBiz Kawaii POS</title>
+    <!-- Google Font 'Mali' for kawaii styling -->
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #1e1e24;       /* Dark charcoal background */
+            --card-bg: #2b2b36;        /* Dark gray container */
+            --card-hover: #353542;
+            --primary: #ff85a2;        /* Kawaii pink accent */
+            --primary-hover: #ff6b8f;
+            --primary-light: rgba(255, 133, 162, 0.12);
+            --text-main: #ffffff;      /* Main light text */
+            --text-muted: #a0a0b0;     /* Muted gray text */
+            --border-color: #3f3f4e;   /* Subtle divider border */
+            --danger: #ff4757;         /* Red action alert */
+            --danger-hover: #ff2e43;
+            --success: #2ed573;        /* Green profit / success badge */
+            --success-hover: #26af5f;
+            --accent-yellow: #ffa502;
+            --accent-blue: #70a1ff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Mali', cursive, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        header {
+            background-color: var(--card-bg);
+            padding: 10px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+        }
+
+        .brand-title {
+            color: var(--primary);
+            font-size: 1.15rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .lang-btn {
+            background: var(--primary-light);
+            border: 1.5px solid var(--primary);
+            color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            line-height: 1;
+        }
+
+        .lang-btn:hover {
+            background: var(--primary);
+            color: #ffffff;
+            transform: scale(1.04);
+        }
+
+        nav {
+            display: flex;
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--border-color);
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-btn {
+            flex: 1;
+            min-width: 90px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            border-radius: 0;
+            padding: 12px 10px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .nav-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 16px;
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 18px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .card h3 {
+            color: var(--primary);
+            margin-bottom: 14px;
+            font-size: 1.1rem;
+            border-bottom: 2px dashed var(--border-color);
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .input-row > .input-group {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            outline: none;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 8px rgba(255, 133, 162, 0.25);
+        }
+
+        button {
+            width: 100%;
+            padding: 11px;
+            border-radius: 12px;
+            border: none;
+            background-color: var(--primary);
+            color: white;
+            font-size: 0.92rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 44px;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: var(--danger-hover);
+        }
+
+        .btn-dashed {
+            background: transparent;
+            border: 2px dashed var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-dashed:hover {
+            background: var(--primary-light);
+        }
+
+        /* KPI Cards Grid for Sales Reports */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .kpi-card {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .kpi-title {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .kpi-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .period-switcher {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .period-btn {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            min-height: 36px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .period-btn.active {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.86rem;
+            white-space: nowrap;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: rgba(255, 255, 255, 0.03);
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background-color: rgba(255, 133, 162, 0.04);
+        }
+
+        .pos-container {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 16px;
+        }
+
+        @media (max-width: 850px) {
+            .pos-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+        }
+
+        .menu-item-btn {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            padding: 14px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100px;
+            color: var(--text-main);
+        }
+
+        .menu-item-btn:hover {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+            transform: scale(1.02);
+        }
+
+        .menu-item-btn .item-name {
+            font-weight: 700;
+            font-size: 0.92rem;
+            word-break: break-word;
+        }
+
+        .menu-item-btn .item-price {
+            color: var(--success);
+            font-weight: 700;
+            font-size: 1rem;
+            margin-top: 6px;
+        }
+
+        .cart-panel {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
+            max-height: calc(100vh - 140px);
+            position: sticky;
+            top: 70px;
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            margin: 10px 0;
+            padding-right: 4px;
+            border-top: 1px dashed var(--border-color);
+            border-bottom: 1px dashed var(--border-color);
+            min-height: 140px;
+            max-height: 280px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 8px 0;
+            padding: 8px 10px;
+            background-color: var(--bg-color);
+            border-radius: 10px;
+            font-size: 0.85rem;
+        }
+
+        .cart-total {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: right;
+            margin-bottom: 12px;
+        }
+
+        .recipe-materials {
+            background: var(--bg-color);
+            padding: 12px;
+            border-radius: 12px;
+            margin: 10px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .recipe-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .unit-select {
+            min-width: 85px;
+            max-width: 110px;
+            background-color: var(--card-bg);
+            border-color: var(--primary);
+            color: var(--primary);
+            font-weight: 700;
+            padding: 8px;
+            font-size: 0.82rem;
+        }
+
+        .recipe-cost-tag {
+            font-size: 0.8rem;
+            color: var(--success);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.75);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 16px;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-card {
+            background-color: var(--card-bg);
+            padding: 22px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            border: 2px solid var(--primary);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .modal-title {
+            color: var(--primary);
+            font-size: 1.15rem;
+            margin-bottom: 12px;
+        }
+
+        .qr-display {
+            width: 200px;
+            height: 200px;
+            background-color: white;
+            border-radius: 16px;
+            margin: 12px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border: 2px dashed var(--primary);
+            color: #333;
+        }
+
+        .qr-display img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .qr-upload-btn {
+            background-color: var(--card-bg);
+            border: 2px dashed var(--primary);
+            color: var(--primary);
+            padding: 16px;
+            border-radius: 14px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 12px;
+            display: block;
+            transition: all 0.2s ease;
+        }
+
+        .qr-upload-btn:hover {
+            background: var(--primary-light);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand-title">
+            <span>🌸 PinkBiz Kawaii POS</span>
+        </div>
+        <button class="lang-btn" onclick="toggleLanguage()">
+            <span>🌐</span> <span id="lang-label">TH | EN</span>
+        </button>
+    </header>
+
+    <nav>
+        <button class="nav-btn active" onclick="switchTab('pos')" data-i18n="nav_pos">🛒 POS</button>
+        <button class="nav-btn" onclick="switchTab('costs')" data-i18n="nav_costs">📦 Costs</button>
+        <button class="nav-btn" onclick="switchTab('menu')" data-i18n="nav_menu">🍧 Menu Setup</button>
+        <button class="nav-btn" onclick="switchTab('reports')" data-i18n="nav_reports">📊 Reports</button>
+        <button class="nav-btn" onclick="switchTab('settings')" data-i18n="nav_settings">⚙️ Settings</button>
+    </nav>
+
+    <div id="pos" class="tab-content active">
+        <div class="pos-container">
+            <div class="card">
+                <h3 data-i18n="pos_menu_title">Menu Items 🍰</h3>
+                <div class="menu-grid" id="pos-menu-grid">
+                    <!-- Dynamic menu item buttons rendered via JS -->
+                </div>
+            </div>
+
+            <div class="cart-panel">
+                <h3 data-i18n="pos_cart_title">Shopping Cart 🛒</h3>
+                <div class="cart-items" id="cart-items">
+                    <!-- Dynamic cart items rendered via JS -->
+                </div>
+                <button class="btn-dashed" onclick="openAddonModal()" style="margin-bottom: 10px;" data-i18n="pos_add_addon">+ Custom Add-on</button>
+                <div class="cart-total" id="cart-total">Total: 0.00 ฿</div>
+                <button onclick="checkout()" data-i18n="pos_checkout">Checkout</button>
+                <button class="btn-danger" onclick="clearCart()" style="margin-top: 8px;" data-i18n="pos_clear">Clear Cart</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="costs" class="tab-content">
+        <div class="card">
+            <h3 data-i18n="costs_add_title">Record Raw Materials & Packaging 📦</h3>
+            
+            <div class="input-row">
+                <div class="input-group">
+                    <label data-i18n="costs_type_label">Type</label>
+                    <select id="cost-type">
+                        <option value="raw" data-i18n="type_raw">Raw Material</option>
+                        <option value="pkg" data-i18n="type_pkg">Packaging</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label data-i18n="costs_name_label">Item Name</label>
+                    <input type="text" id="cost-name" placeholder="e.g. Fresh Milk, Paper Cup" data-i18n-ph="costs_name_ph">
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label data-i18n="costs_qty_label">Purchase Quantity</label>
+                    <input type="number" id="cost-qty" step="any" placeholder="0">
+                </div>
+                <div class="input-group">
+                    <label data-i18n="costs_unit_label">Purchase Unit</label>
+                    <select id="cost-unit">
+                        <option value="g" data-i18n="unit_g">Grams (g)</option>
+                        <option value="kg" data-i18n="unit_kg">Kilograms (kg)</option>
+                        <option value="pcs" data-i18n="unit_pcs">Pieces (pcs)</option>
+                        <option value="items" data-i18n="unit_items">Items (items)</option>
+                        <option value="ml" data-i18n="unit_ml">Milliliters (ml)</option>
+                        <option value="l" data-i18n="unit_l">Liters (l)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label data-i18n="costs_price_label">Total Purchased Price (฿)</label>
+                    <input type="number" id="cost-price" step="any" placeholder="0">
+                </div>
+            </div>
+
+            <button onclick="addCost()" data-i18n="costs_save_btn">Save Cost Record</button>
+        </div>
+
+        <div class="card">
+            <h3 data-i18n="costs_history_title">Purchase History 📜</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-i18n="th_date">Date</th>
+                            <th data-i18n="th_item">Item</th>
+                            <th data-i18n="th_qty">Quantity</th>
+                            <th data-i18n="th_price">Total Price</th>
+                            <th data-i18n="th_unit_cost">Cost/Unit</th>
+                            <th data-i18n="th_action">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="costs-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="menu" class="tab-content">
+        <div class="card">
+            <h3 data-i18n="menu_create_title">Create New Menu Item 🍧</h3>
+            
+            <div class="input-row">
+                <div class="input-group">
+                    <label data-i18n="menu_name_label">Menu Name</label>
+                    <input type="text" id="menu-name" placeholder="e.g. Bubble Milk Tea" data-i18n-ph="menu_name_ph">
+                </div>
+                <div class="input-group">
+                    <label data-i18n="menu_price_label">Selling Price (฿)</label>
+                    <input type="number" id="menu-price" step="any" placeholder="0">
+                </div>
+            </div>
+
+            <h4 style="color:var(--primary); margin:12px 0 6px 0;" data-i18n="recipe_title">Recipe Ingredients & Quantity (Per Serving)</h4>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:10px;" data-i18n="recipe_subtitle">Select ingredient, choose unit, and cost calculates automatically.</p>
+
+            <div id="recipe-container" class="recipe-materials">
+                <!-- Recipe dynamic rows rendered via JS -->
+            </div>
+            
+            <button class="btn-dashed" onclick="addRecipeRow()" style="margin-bottom:14px; margin-top:8px;" data-i18n="recipe_add_btn">+ Add Ingredient</button>
+            <button onclick="saveMenu()" data-i18n="menu_save_btn">Save Menu Item</button>
+        </div>
+
+        <div class="card">
+            <h3 data-i18n="menu_list_title">Menu List & Estimated Profit 📋</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-i18n="th_name">Name</th>
+                            <th data-i18n="th_price">Selling Price</th>
+                            <th data-i18n="th_est_cost">Est. Cost</th>
+                            <th data-i18n="th_profit">Est. Profit</th>
+                            <th data-i18n="th_action">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="menu-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="reports" class="tab-content">
+        <div class="card">
+            <h3 data-i18n="reports_title">Sales Summary Report 📊</h3>
+            
+            <!-- Period Filter Switcher Buttons -->
+            <div class="period-switcher">
+                <button class="period-btn active" onclick="setReportPeriod('daily')" id="btn-period-daily" data-i18n="period_daily">📅 Daily</button>
+                <button class="period-btn" onclick="setReportPeriod('weekly')" id="btn-period-weekly" data-i18n="period_weekly">🗓️ Weekly</button>
+                <button class="period-btn" onclick="setReportPeriod('monthly')" id="btn-period-monthly" data-i18n="period_monthly">📆 Monthly</button>
+                <button class="period-btn" onclick="setReportPeriod('all')" id="btn-period-all" data-i18n="period_all">♾️ All Time</button>
+            </div>
+
+            <!-- KPI Cards Overview Grid -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-title" data-i18n="kpi_revenue">Total Revenue</div>
+                    <div class="kpi-value" id="kpi-revenue" style="color:var(--success);">0.00 ฿</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title" data-i18n="kpi_cost">Total Cost</div>
+                    <div class="kpi-value" id="kpi-cost" style="color:var(--danger);">0.00 ฿</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title" data-i18n="kpi_profit">Net Profit</div>
+                    <div class="kpi-value" id="kpi-profit" style="color:var(--primary);">0.00 ฿</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title" data-i18n="kpi_orders">Total Orders</div>
+                    <div class="kpi-value" id="kpi-orders" style="color:var(--accent-blue);">0</div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-i18n="th_datetime">Date/Time</th>
+                            <th data-i18n="th_items_sold">Items Sold</th>
+                            <th data-i18n="th_revenue">Revenue</th>
+                            <th data-i18n="th_cost">Est. Cost</th>
+                            <th data-i18n="th_net_profit">Net Profit</th>
+                            <th data-i18n="th_action">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sales-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="settings" class="tab-content">
+        <div class="card">
+            <h3 data-i18n="settings_qr_title">Payment QR Code Setup 🏦</h3>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:14px;" data-i18n="settings_qr_desc">Upload PromptPay or Bank QR Code image to display during checkout.</p>
+
+            <label class="qr-upload-btn">
+                <input type="file" id="qr-upload" accept="image/*" style="display:none;" onchange="handleQRUpload(event)">
+                <span data-i18n="settings_qr_upload_btn">📸 Click to Upload QR Image</span>
+            </label>
+
+            <div class="qr-display" id="settings-qr-preview">
+                <span data-i18n="qr_no_image">No Image Uploaded</span>
+            </div>
+
+            <button onclick="removeQRCode()" class="btn-danger" style="margin-top:14px;" data-i18n="settings_qr_remove">Remove QR Code</button>
+        </div>
+
+        <div class="card" style="border-color: rgba(255, 71, 87, 0.4);">
+            <h3 style="color:var(--danger);" data-i18n="settings_reset_title">Reset Application Data ⚠️</h3>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:14px;" data-i18n="settings_reset_desc">Clear all raw materials, menu items, sales reports and settings from local storage.</p>
+            <button onclick="clearAllData()" class="btn-danger" data-i18n="settings_reset_btn">Clear All Data</button>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="alert-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h3 class="modal-title" id="alert-title">Notification</h3>
+            <p id="alert-message" style="margin-bottom: 18px; color: var(--text-main); font-size: 0.92rem;"></p>
+            <button onclick="closeModal('alert-modal')" data-i18n="modal_ok">OK</button>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h3 class="modal-title" id="confirm-title">Confirm Action</h3>
+            <p id="confirm-message" style="margin-bottom: 18px; color: var(--text-main); font-size: 0.92rem;"></p>
+            <div style="display:flex; gap:8px;">
+                <button id="confirm-yes-btn" style="background-color: var(--danger);" data-i18n="modal_yes">Yes, Confirm</button>
+                <button class="btn-secondary" onclick="closeModal('confirm-modal')" data-i18n="modal_cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="addon-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h3 class="modal-title" data-i18n="addon_title">Add Custom Item</h3>
+            <div class="input-group">
+                <label data-i18n="addon_name_label">Item Name</label>
+                <input type="text" id="addon-name" placeholder="e.g. Extra Boba, Shopping Bag" data-i18n-ph="addon_name_ph">
+            </div>
+            <div class="input-group">
+                <label data-i18n="addon_price_label">Price (฿)</label>
+                <input type="number" id="addon-price" step="any" placeholder="0">
+            </div>
+            <button onclick="addCustomAddon()" data-i18n="addon_add_btn">Add to Cart</button>
+            <button class="btn-secondary" onclick="closeModal('addon-modal')" style="margin-top:8px;" data-i18n="modal_cancel">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h3 class="modal-title" data-i18n="checkout_title">Payment Checkout</h3>
+            <h2 id="checkout-total" style="color:var(--success); margin-bottom:10px;">Total: 0.00 ฿</h2>
+
+            <div class="qr-display" id="checkout-qr-display"></div>
+            <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:14px;" data-i18n="checkout_scan_hint">Scan QR code to pay</p>
+
+            <button onclick="confirmSale()" style="background-color: var(--success);" data-i18n="checkout_confirm">✅ Confirm Payment Received</button>
+            <button class="btn-secondary" onclick="closeModal('checkout-modal')" style="margin-top:8px;" data-i18n="modal_cancel">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'pinkbiz_local_data';
+        let currentLang = 'th';
+        let activeReportPeriod = 'daily';
+
+        let userData = {
+            costs: [],
+            menus: [],
+            sales: [],
+            qrCodeBase64: null,
+            lang: 'th'
+        };
+        let cart = [];
+
+        const i18n = {
+            th: {
+                nav_pos: "🛒 ขายหน้าร้าน",
+                nav_costs: "📦 ต้นทุนวัตถุดิบ",
+                nav_menu: "🍧 ตั้งค่าเมนู",
+                nav_reports: "📊 รายงานยอดขาย",
+                nav_settings: "⚙️ ตั้งค่า",
+
+                pos_menu_title: "รายการเมนู 🍰",
+                pos_cart_title: "ตะกร้าสินค้า 🛒",
+                pos_cart_empty: "ตะกร้ายังว่างอยู่ค่ะ",
+                pos_add_addon: "+ เพิ่มท็อปปิ้ง / รายการพิเศษ",
+                pos_total: "รวมทั้งหมด:",
+                pos_checkout: "💳 ชำระเงิน",
+                pos_clear: "🗑️ ล้างตะกร้า",
+
+                costs_add_title: "บันทึกต้นทุนวัตถุดิบ / บรรจุภัณฑ์ 📦",
+                costs_type_label: "ประเภท",
+                costs_name_label: "ชื่อรายการ",
+                costs_qty_label: "จำนวนที่ซื้อ",
+                costs_unit_label: "หน่วยที่ซื้อ",
+                costs_price_label: "ราคารวมที่ซื้อ (บาท)",
+                costs_save_btn: "💾 บันทึกต้นทุน",
+                costs_history_title: "ประวัติการซื้อวัตถุดิบ 📜",
+                costs_name_ph: "เช่น นมสด, แก้วพลาสติก, น้ำตาล",
+
+                type_raw: "วัตถุดิบ (Raw Material)",
+                type_pkg: "บรรจุภัณฑ์ (Packaging)",
+
+                unit_g: "กรัม (g)",
+                unit_kg: "กิโลกรัม (kg)",
+                unit_pcs: "ชิ้น (pcs)",
+                unit_items: "อัน (items)",
+                unit_ml: "มิลลิลิตร (ml)",
+                unit_l: "ลิตร (l)",
+
+                menu_create_title: "สร้างเมนูใหม่ 🍧",
+                menu_name_label: "ชื่อเมนู",
+                menu_price_label: "ราคาขาย (บาท)",
+                menu_name_ph: "เช่น ชานมไข่มุก",
+                recipe_title: "สูตรวัตถุดิบและปริมาณที่ใช้ (ต่อ 1 เสิร์ฟ)",
+                recipe_subtitle: "เลือกวัตถุดิบ ระบบจะคำนวณต้นทุนต่อแก้วให้อัตโนมัติ (เช่น ซื้อเป็น kg แต่ใส่เป็น g)",
+                recipe_add_btn: "+ เพิ่มวัตถุดิบในสูตร",
+                recipe_select_placeholder: "-- เลือกวัตถุดิบ --",
+                menu_save_btn: "💾 บันทึกเมนู",
+                menu_list_title: "รายการเมนูทั้งหมด 📋",
+
+                reports_title: "สรุปรายงานยอดขาย 📊",
+                period_daily: "📅 รายวัน",
+                period_weekly: "🗓️ รายสัปดาห์",
+                period_monthly: "📆 รายเดือน",
+                period_all: "♾️ ทั้งหมด",
+
+                kpi_revenue: "ยอดขายรวม",
+                kpi_cost: "ต้นทุนรวม",
+                kpi_profit: "กำไรสุทธิ",
+                kpi_orders: "จำนวนออเดอร์",
+
+                settings_qr_title: "ตั้งค่า QR Code ชำระเงิน 🏦",
+                settings_qr_desc: "อัปโหลดรูปภาพ QR Code พร้อมเพย์หรือบัญชีธนาคารเพื่อแสดงตอนชำระเงิน",
+                settings_qr_upload_btn: "📸 คลิกเพื่ออัปโหลดรูป QR Code",
+                settings_qr_remove: "🗑️ ลบรูป QR Code",
+                settings_reset_title: "รีเซ็ตข้อมูลระบบ ⚠️",
+                settings_reset_desc: "ลบประวัติการซื้อ เมนู และรายงานขายทั้งหมดออกจากเครื่องของคุณ",
+                settings_reset_btn: "🗑️ ล้างข้อมูลทั้งหมด",
+
+                qr_no_image: "ยังไม่มีรูปภาพ",
+
+                th_date: "วันที่",
+                th_item: "รายการ",
+                th_qty: "จำนวน",
+                th_price: "ราคารวม",
+                th_unit_cost: "ต้นทุน/หน่วย",
+                th_action: "จัดการ",
+                th_name: "ชื่อเมนู",
+                th_est_cost: "ต้นทุนประมาณ",
+                th_profit: "กำไร/แก้ว",
+                th_datetime: "วัน/เวลา",
+                th_items_sold: "รายการสินค้า",
+                th_revenue: "รายรับ",
+                th_cost: "ต้นทุน",
+                th_net_profit: "กำไรสุทธิ",
+
+                modal_ok: "ตกลง",
+                modal_yes: "ใช่, ยืนยัน",
+                modal_cancel: "ยกเลิก",
+
+                addon_title: "เพิ่มรายการพิเศษ",
+                addon_name_label: "ชื่อรายการ",
+                addon_price_label: "ราคา (บาท)",
+                addon_name_ph: "เช่น เพิ่มไข่มุก, ถุงพลาสติก",
+                addon_add_btn: "เพิ่มลงตะกร้า",
+
+                checkout_title: "ชำระเงิน",
+                checkout_scan_hint: "สแกน QR Code เพื่อชำระเงิน",
+                checkout_confirm: "✅ ยืนยันได้รับชำระเงินแล้ว",
+
+                msg_fill_all: "กรอกข้อมูลให้ครบถ้วนด้วยนะคะ",
+                msg_cost_saved: "บันทึกต้นทุนวัตถุดิบเรียบร้อยแล้วค่ะ! 💖",
+                msg_menu_saved: "บันทึกเมนูเรียบร้อยแล้วค่ะ! 💖",
+                msg_cart_empty: "ตะกร้าสินค้ายังว่างอยู่ค่ะ!",
+                msg_sale_success: "บันทึกการขายสำเร็จ! ขอบคุณค่ะ 💖",
+                msg_qr_success: "อัปโหลดรูป QR Code เรียบร้อยแล้ว!",
+                msg_qr_removed: "ลบรูป QR Code แล้วค่ะ",
+                msg_confirm_delete: "คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้?",
+                msg_reset_confirm: "คุณแน่ใจหรือไม่ว่าต้องการล้างข้อมูลทั้งหมดในเครื่องของคุณ? การกระทำนี้ไม่สามารถย้อนกลับได้!"
+            },
+            en: {
+                nav_pos: "🛒 POS",
+                nav_costs: "📦 Costs",
+                nav_menu: "🍧 Menu Setup",
+                nav_reports: "📊 Reports",
+                nav_settings: "⚙️ Settings",
+
+                pos_menu_title: "Menu Items 🍰",
+                pos_cart_title: "Shopping Cart 🛒",
+                pos_cart_empty: "Cart is empty",
+                pos_add_addon: "+ Custom Add-on",
+                pos_total: "Total:",
+                pos_checkout: "💳 Checkout",
+                pos_clear: "🗑️ Clear Cart",
+
+                costs_add_title: "Record Raw Materials & Packaging 📦",
+                costs_type_label: "Type",
+                costs_name_label: "Item Name",
+                costs_qty_label: "Purchase Quantity",
+                costs_unit_label: "Purchase Unit",
+                costs_price_label: "Total Purchased Price (฿)",
+                costs_save_btn: "💾 Save Cost Record",
+                costs_history_title: "Purchase History 📜",
+                costs_name_ph: "e.g. Fresh Milk, Paper Cup, Sugar",
+
+                type_raw: "Raw Material",
+                type_pkg: "Packaging",
+
+                unit_g: "Grams (g)",
+                unit_kg: "Kilograms (kg)",
+                unit_pcs: "Pieces (pcs)",
+                unit_items: "Items (items)",
+                unit_ml: "Milliliters (ml)",
+                unit_l: "Liters (l)",
+
+                menu_create_title: "Create New Menu Item 🍧",
+                menu_name_label: "Menu Name",
+                menu_price_label: "Selling Price (฿)",
+                menu_name_ph: "e.g. Bubble Milk Tea",
+                recipe_title: "Recipe Ingredients & Quantity (Per Serving)",
+                recipe_subtitle: "Select ingredient, pick unit, and cost calculates automatically.",
+                recipe_add_btn: "+ Add Ingredient",
+                recipe_select_placeholder: "-- Select Material --",
+                menu_save_btn: "💾 Save Menu Item",
+                menu_list_title: "Menu List & Estimated Profit 📋",
+
+                reports_title: "Sales Summary Report 📊",
+                period_daily: "📅 Daily",
+                period_weekly: "🗓️ Weekly",
+                period_monthly: "📆 Monthly",
+                period_all: "♾️ All Time",
+
+                kpi_revenue: "Total Revenue",
+                kpi_cost: "Total Cost",
+                kpi_profit: "Net Profit",
+                kpi_orders: "Total Orders",
+
+                settings_qr_title: "Payment QR Code Setup 🏦",
+                settings_qr_desc: "Upload PromptPay or Bank QR Code image to display during checkout.",
+                settings_qr_upload_btn: "📸 Click to Upload QR Image",
+                settings_qr_remove: "🗑️ Remove QR Code",
+                settings_reset_title: "Reset Application Data ⚠️",
+                settings_reset_desc: "Clear all raw materials, menu items, and sales reports from your local storage.",
+                settings_reset_btn: "🗑️ Clear All Data",
+
+                qr_no_image: "No Image Uploaded",
+
+                th_date: "Date",
+                th_item: "Item",
+                th_qty: "Qty",
+                th_price: "Total Price",
+                th_unit_cost: "Cost/Unit",
+                th_action: "Action",
+                th_name: "Name",
+                th_est_cost: "Est. Cost",
+                th_profit: "Est. Profit",
+                th_datetime: "Date/Time",
+                th_items_sold: "Items Sold",
+                th_revenue: "Revenue",
+                th_cost: "Est. Cost",
+                th_net_profit: "Net Profit",
+
+                modal_ok: "OK",
+                modal_yes: "Yes, Confirm",
+                modal_cancel: "Cancel",
+
+                addon_title: "Add Custom Item",
+                addon_name_label: "Item Name",
+                addon_price_label: "Price (฿)",
+                addon_name_ph: "e.g. Extra Boba, Plastic Bag",
+                addon_add_btn: "Add to Cart",
+
+                checkout_title: "Payment Checkout",
+                checkout_scan_hint: "Scan QR Code to pay",
+                checkout_confirm: "✅ Confirm Payment Received",
+
+                msg_fill_all: "Please fill in all details.",
+                msg_cost_saved: "Cost record saved successfully! 💖",
+                msg_menu_saved: "Menu saved successfully! 💖",
+                msg_cart_empty: "Shopping cart is empty!",
+                msg_sale_success: "Sale recorded successfully! Thank you 💖",
+                msg_qr_success: "QR Code uploaded successfully!",
+                msg_qr_removed: "QR Code removed.",
+                msg_confirm_delete: "Are you sure you want to delete this item?",
+                msg_reset_confirm: "Are you sure you want to clear all data from your device? This cannot be undone!"
+            }
+        };
+
+        function normalizeToBaseUnit(qty, unit) {
+            qty = parseFloat(qty) || 0;
+            switch(unit) {
+                case 'kg': return { baseQty: qty * 1000, category: 'weight' };
+                case 'g':  return { baseQty: qty,        category: 'weight' };
+                case 'l':  return { baseQty: qty * 1000, category: 'volume' };
+                case 'ml': return { baseQty: qty,        category: 'volume' };
+                case 'pcs': return { baseQty: qty,       category: 'pcs' };
+                case 'items': return { baseQty: qty,     category: 'items' };
+                default:   return { baseQty: qty,        category: 'other' };
+            }
+        }
+
+        function getMaterialCostPerBaseUnit(matName) {
+            let purchases = userData.costs.filter(c => c.name.toLowerCase() === matName.toLowerCase());
+            if(purchases.length === 0) return { costPerBase: 0, category: 'weight', primaryUnit: 'g' };
+
+            let totalSpent = 0;
+            let totalBaseQty = 0;
+            let category = 'weight';
+
+            purchases.forEach(p => {
+                totalSpent += parseFloat(p.price);
+                const norm = normalizeToBaseUnit(p.qty, p.unit);
+                totalBaseQty += norm.baseQty;
+                category = norm.category;
+            });
+
+            return {
+                costPerBase: totalBaseQty > 0 ? (totalSpent / totalBaseQty) : 0,
+                category: category,
+                primaryUnit: purchases[purchases.length - 1].unit
+            };
+        }
+
+        window.onload = () => {
+            loadUserData();
+            updateTranslations();
+            updateAllViews();
+        };
+
+        function loadUserData() {
+            let data = localStorage.getItem(STORAGE_KEY);
+            if(data) {
+                try {
+                    userData = JSON.parse(data);
+                    if(!userData.costs) userData.costs = [];
+                    if(!userData.menus) userData.menus = [];
+                    if(!userData.sales) userData.sales = [];
+                    if(userData.lang) currentLang = userData.lang;
+                } catch(e) {
+                    console.error("Error loading stored data from localStorage", e);
+                }
+            }
+        }
+
+        function saveUserData() {
+            userData.lang = currentLang;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+            updateAllViews();
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'th' ? 'en' : 'th';
+            document.getElementById('lang-label').innerText = currentLang === 'th' ? 'TH | EN' : 'EN | TH';
+            saveUserData();
+            updateTranslations();
+            updateAllViews();
+        }
+
+        function updateTranslations() {
+            const langDict = i18n[currentLang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if(langDict[key]) el.innerText = langDict[key];
+            });
+            document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+                const key = el.getAttribute('data-i18n-ph');
+                if(langDict[key]) el.placeholder = langDict[key];
+            });
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+            
+            if(tabId === 'menu') prepareRecipeDropdowns();
+        }
+
+        function showAlert(msgKeyOrText, isDirectText = false) {
+            const msg = isDirectText ? msgKeyOrText : (i18n[currentLang][msgKeyOrText] || msgKeyOrText);
+            document.getElementById('alert-message').innerText = msg;
+            document.getElementById('alert-modal').style.display = 'flex';
+        }
+
+        function showConfirmModal(msgKeyOrText, onConfirm) {
+            const msg = i18n[currentLang][msgKeyOrText] || msgKeyOrText;
+            document.getElementById('confirm-message').innerText = msg;
+            const yesBtn = document.getElementById('confirm-yes-btn');
+            
+            yesBtn.onclick = () => {
+                closeModal('confirm-modal');
+                onConfirm();
+            };
+            
+            document.getElementById('confirm-modal').style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function addCost() {
+            const type = document.getElementById('cost-type').value;
+            const name = document.getElementById('cost-name').value.trim();
+            const qty = parseFloat(document.getElementById('cost-qty').value);
+            const unit = document.getElementById('cost-unit').value;
+            const price = parseFloat(document.getElementById('cost-price').value);
+
+            if(!name || isNaN(qty) || qty <= 0 || isNaN(price) || price < 0) {
+                return showAlert('msg_fill_all');
+            }
+
+            const costPerUnit = price / qty;
+
+            userData.costs.push({
+                id: Date.now().toString(),
+                date: new Date().toLocaleDateString(currentLang === 'th' ? 'th-TH' : 'en-US'),
+                type, name, qty, unit, price, costPerUnit
+            });
+
+            document.getElementById('cost-name').value = '';
+            document.getElementById('cost-qty').value = '';
+            document.getElementById('cost-price').value = '';
+
+            saveUserData();
+            showAlert('msg_cost_saved');
+        }
+
+        function deleteCost(id) {
+            showConfirmModal('msg_confirm_delete', () => {
+                userData.costs = userData.costs.filter(c => c.id !== id);
+                saveUserData();
+            });
+        }
+
+        function addRecipeRow() {
+            const container = document.getElementById('recipe-container');
+            const row = document.createElement('div');
+            row.className = 'recipe-row';
+            
+            let uniqueMats = [...new Set(userData.costs.map(c => c.name))];
+            let options = `<option value="">${i18n[currentLang].recipe_select_placeholder}</option>`;
+            
+            uniqueMats.forEach(m => {
+                options += `<option value="${m}">${m}</option>`;
+            });
+
+            row.innerHTML = `
+                <select class="recipe-mat" onchange="onRecipeMatChange(this)" style="flex:2">${options}</select>
+                <input type="number" class="recipe-qty" step="any" placeholder="${i18n[currentLang].th_qty}" oninput="calculateRecipeRowCost(this)" style="flex:1">
+                <select class="unit-select recipe-unit" onchange="calculateRecipeRowCost(this)">
+                    <option value="g">g (กรัม)</option>
+                    <option value="kg">kg (กิโลกรัม)</option>
+                    <option value="ml">ml (มล.)</option>
+                    <option value="l">l (ลิตร)</option>
+                    <option value="pcs">pcs (ชิ้น)</option>
+                    <option value="items">items (อัน)</option>
+                </select>
+                <span class="recipe-cost-tag">0.00 ฿</span>
+                <button class="btn-danger" onclick="this.parentElement.remove();" style="width:auto; padding:6px 10px; margin:0;">✕</button>
+            `;
+            container.appendChild(row);
+        }
+
+        function onRecipeMatChange(selectEl) {
+            const matName = selectEl.value;
+            const row = selectEl.parentElement;
+            const unitSelect = row.querySelector('.recipe-unit');
+
+            if(matName) {
+                const info = getMaterialCostPerBaseUnit(matName);
+                if(info.category === 'weight') {
+                    unitSelect.innerHTML = `<option value="g">g (กรัม)</option><option value="kg">kg (กิโลกรัม)</option>`;
+                } else if(info.category === 'volume') {
+                    unitSelect.innerHTML = `<option value="ml">ml (มล.)</option><option value="l">l (ลิตร)</option>`;
+                } else if(info.category === 'pcs') {
+                    unitSelect.innerHTML = `<option value="pcs">${currentLang === 'th' ? 'ชิ้น (pcs)' : 'pcs'}</option>`;
+                } else if(info.category === 'items') {
+                    unitSelect.innerHTML = `<option value="items">${currentLang === 'th' ? 'อัน (items)' : 'items'}</option>`;
+                } else {
+                    unitSelect.innerHTML = `<option value="${info.primaryUnit}">${info.primaryUnit}</option>`;
+                }
+            }
+            calculateRecipeRowCost(selectEl);
+        }
+
+        function calculateRecipeRowCost(el) {
+            const row = el.closest('.recipe-row');
+            const matName = row.querySelector('.recipe-mat').value;
+            const qty = parseFloat(row.querySelector('.recipe-qty').value) || 0;
+            const unit = row.querySelector('.recipe-unit').value;
+            const costTag = row.querySelector('.recipe-cost-tag');
+
+            if(matName && qty > 0) {
+                const info = getMaterialCostPerBaseUnit(matName);
+                const norm = normalizeToBaseUnit(qty, unit);
+                const cost = norm.baseQty * info.costPerBase;
+                costTag.innerText = `${cost.toFixed(2)} ฿`;
+            } else {
+                costTag.innerText = `0.00 ฿`;
+            }
+        }
+
+        function prepareRecipeDropdowns() {
+            if(document.getElementById('recipe-container').children.length === 0) {
+                addRecipeRow();
+            }
+        }
+
+        function saveMenu() {
+            const name = document.getElementById('menu-name').value.trim();
+            const price = parseFloat(document.getElementById('menu-price').value);
+
+            if(!name || isNaN(price) || price < 0) {
+                return showAlert('msg_fill_all');
+            }
+
+            let recipe = [];
+            let estCost = 0;
+
+            const rows = document.querySelectorAll('.recipe-row');
+            rows.forEach(row => {
+                const mat = row.querySelector('.recipe-mat').value;
+                const qty = parseFloat(row.querySelector('.recipe-qty').value);
+                const unit = row.querySelector('.recipe-unit').value;
+
+                if(mat && !isNaN(qty) && qty > 0) {
+                    let info = getMaterialCostPerBaseUnit(mat);
+                    let norm = normalizeToBaseUnit(qty, unit);
+                    let itemCost = norm.baseQty * info.costPerBase;
+
+                    recipe.push({ name: mat, qty: qty, unit: unit, cost: itemCost });
+                    estCost += itemCost;
+                }
+            });
+
+            userData.menus.push({
+                id: Date.now().toString(),
+                name, price, recipe, estCost
+            });
+
+            document.getElementById('menu-name').value = '';
+            document.getElementById('menu-price').value = '';
+            document.getElementById('recipe-container').innerHTML = '';
+            addRecipeRow();
+
+            saveUserData();
+            showAlert('msg_menu_saved');
+        }
+
+        function deleteMenu(id) {
+            showConfirmModal('msg_confirm_delete', () => {
+                userData.menus = userData.menus.filter(m => m.id !== id);
+                saveUserData();
+            });
+        }
+
+        function addToCart(menuId) {
+            const menu = userData.menus.find(m => m.id === menuId);
+            if(menu) {
+                cart.push({
+                    id: Date.now() + Math.random(),
+                    type: 'menu',
+                    name: menu.name,
+                    price: menu.price,
+                    cost: menu.estCost
+                });
+                renderCart();
+            }
+        }
+
+        function openAddonModal() {
+            document.getElementById('addon-name').value = '';
+            document.getElementById('addon-price').value = '';
+            document.getElementById('addon-modal').style.display = 'flex';
+        }
+
+        function addCustomAddon() {
+            const name = document.getElementById('addon-name').value.trim();
+            const price = parseFloat(document.getElementById('addon-price').value);
+
+            if(!name || isNaN(price) || price < 0) {
+                return showAlert('msg_fill_all');
+            }
+
+            cart.push({
+                id: Date.now() + Math.random(),
+                type: 'addon',
+                name: "+ " + name,
+                price: price,
+                cost: 0
+            });
+
+            closeModal('addon-modal');
+            renderCart();
+        }
+
+        function removeCartItem(id) {
+            cart = cart.filter(item => item.id !== id);
+            renderCart();
+        }
+
+        function clearCart() {
+            cart = [];
+            renderCart();
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items');
+            container.innerHTML = '';
+            let total = 0;
+
+            if(cart.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:30px 0;">${i18n[currentLang].pos_cart_empty}</div>`;
+            } else {
+                cart.forEach((item) => {
+                    total += item.price;
+                    container.innerHTML += `
+                        <div class="cart-item">
+                            <div>
+                                <div style="font-weight:700;">${item.name}</div>
+                                <div style="color:var(--success); font-weight:600;">${item.price.toFixed(2)} ฿</div>
+                            </div>
+                            <button class="btn-danger" style="width:auto; padding:4px 8px; margin:0;" onclick="removeCartItem(${item.id})">✕</button>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('cart-total').innerText = `${i18n[currentLang].pos_total} ${total.toFixed(2)} ฿`;
+        }
+
+        function checkout() {
+            if(cart.length === 0) return showAlert('msg_cart_empty');
+
+            let total = cart.reduce((sum, item) => sum + item.price, 0);
+            document.getElementById('checkout-total').innerText = `${i18n[currentLang].pos_total} ${total.toFixed(2)} ฿`;
+
+            const qrDisplay = document.getElementById('checkout-qr-display');
+            if(userData.qrCodeBase64) {
+                qrDisplay.innerHTML = `<img src="${userData.qrCodeBase64}" alt="Payment QR Code">`;
+            } else {
+                qrDisplay.innerHTML = `<div style="color:var(--text-muted); font-size:0.85rem; padding:20px;">${i18n[currentLang].qr_no_image}</div>`;
+            }
+
+            document.getElementById('checkout-modal').style.display = 'flex';
+        }
+
+        function confirmSale() {
+            let totalRevenue = 0;
+            let totalCost = 0;
+            let itemsSummary = [];
+
+            cart.forEach(item => {
+                totalRevenue += item.price;
+                totalCost += item.cost;
+                itemsSummary.push(item.name);
+            });
+
+            const netProfit = totalRevenue - totalCost;
+            const now = new Date();
+
+            userData.sales.push({
+                id: Date.now().toString(),
+                timestamp: now.toISOString(),
+                date: now.toLocaleString(currentLang === 'th' ? 'th-TH' : 'en-US'),
+                items: itemsSummary.join(', '),
+                revenue: totalRevenue,
+                cost: totalCost,
+                profit: netProfit
+            });
+
+            cart = [];
+            saveUserData();
+            closeModal('checkout-modal');
+            showAlert('msg_sale_success');
+        }
+
+        function deleteSale(id) {
+            showConfirmModal('msg_confirm_delete', () => {
+                userData.sales = userData.sales.filter(s => s.id !== id);
+                saveUserData();
+            });
+        }
+
+        function setReportPeriod(period) {
+            activeReportPeriod = period;
+            document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-period-${period}`).classList.add('active');
+            updateAllViews();
+        }
+
+        function getFilteredSales() {
+            const now = new Date();
+            return userData.sales.filter(s => {
+                const sDate = new Date(s.timestamp || s.id);
+                if (activeReportPeriod === 'daily') {
+                    return sDate.toDateString() === now.toDateString();
+                } else if (activeReportPeriod === 'weekly') {
+                    const sevenDaysAgo = new Date();
+                    sevenDaysAgo.setDate(now.getDate() - 7);
+                    return sDate >= sevenDaysAgo;
+                } else if (activeReportPeriod === 'monthly') {
+                    return sDate.getMonth() === now.getMonth() && sDate.getFullYear() === now.getFullYear();
+                }
+                return true; // 'all'
+            });
+        }
+
+        function handleQRUpload(event) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    userData.qrCodeBase64 = e.target.result;
+                    saveUserData();
+                    showAlert('msg_qr_success');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeQRCode() {
+            userData.qrCodeBase64 = null;
+            saveUserData();
+            showAlert('msg_qr_removed');
+        }
+
+        function clearAllData() {
+            showConfirmModal('msg_reset_confirm', () => {
+                userData = { costs: [], menus: [], sales: [], qrCodeBase64: null, lang: currentLang };
+                cart = [];
+                localStorage.removeItem(STORAGE_KEY);
+                saveUserData();
+                showAlert("All data has been reset.", true);
+            });
+        }
+
+        function updateAllViews() {
+            // 1. Costs Table
+            const costsTbody = document.getElementById('costs-table-body');
+            costsTbody.innerHTML = userData.costs.map(c => `
+                <tr>
+                    <td>${c.date}</td>
+                    <td><b>${c.name}</b> <span style="font-size:0.75rem; color:var(--text-muted);">(${c.type === 'raw' ? i18n[currentLang].type_raw : i18n[currentLang].type_pkg})</span></td>
+                    <td>${c.qty} ${c.unit}</td>
+                    <td style="color:var(--primary); font-weight:600;">${c.price.toFixed(2)} ฿</td>
+                    <td>${c.costPerUnit.toFixed(2)} ฿/${c.unit}</td>
+                    <td><button class="btn-danger" style="padding:4px 8px; margin:0;" onclick="deleteCost('${c.id}')">✕</button></td>
+                </tr>
+            `).join('');
+
+            // 2. Menu Setup Table & POS Grid
+            const menuTbody = document.getElementById('menu-table-body');
+            const posGrid = document.getElementById('pos-menu-grid');
+
+            menuTbody.innerHTML = '';
+            posGrid.innerHTML = '';
+
+            userData.menus.forEach(m => {
+                let profit = m.price - m.estCost;
+                menuTbody.innerHTML += `
+                    <tr>
+                        <td><b>${m.name}</b></td>
+                        <td style="color:var(--success); font-weight:600;">${m.price.toFixed(2)} ฿</td>
+                        <td>${m.estCost.toFixed(2)} ฿</td>
+                        <td style="color:${profit >= 0 ? 'var(--success)' : 'var(--danger)'}; font-weight:700;">${profit.toFixed(2)} ฿</td>
+                        <td><button class="btn-danger" style="padding:4px 8px; margin:0;" onclick="deleteMenu('${m.id}')">✕</button></td>
+                    </tr>
+                `;
+
+                posGrid.innerHTML += `
+                    <div class="menu-item-btn" onclick="addToCart('${m.id}')">
+                        <div class="item-name">${m.name}</div>
+                        <div class="item-price">${m.price.toFixed(2)} ฿</div>
+                    </div>
+                `;
+            });
+
+            // 3. Sales Reports Table & KPI Summary Cards
+            const filteredSales = getFilteredSales();
+            const salesTbody = document.getElementById('sales-table-body');
+            
+            let totalRev = 0;
+            let totalCost = 0;
+            let totalProfit = 0;
+
+            salesTbody.innerHTML = filteredSales.map(s => {
+                totalRev += s.revenue;
+                totalCost += s.cost;
+                totalProfit += s.profit;
+                return `
+                <tr>
+                    <td style="font-size:0.8rem; color:var(--text-muted);">${s.date}</td>
+                    <td>${s.items}</td>
+                    <td style="color:var(--success); font-weight:600;">${s.revenue.toFixed(2)} ฿</td>
+                    <td style="color:var(--danger);">${s.cost.toFixed(2)} ฿</td>
+                    <td style="font-weight:700; color:${s.profit >= 0 ? 'var(--success)' : 'var(--danger)'};">${s.profit.toFixed(2)} ฿</td>
+                    <td><button class="btn-danger" style="padding:4px 8px; margin:0;" onclick="deleteSale('${s.id}')">✕</button></td>
+                </tr>
+            `}).join('');
+
+            document.getElementById('kpi-revenue').innerText = `${totalRev.toFixed(2)} ฿`;
+            document.getElementById('kpi-cost').innerText = `${totalCost.toFixed(2)} ฿`;
+            document.getElementById('kpi-profit').innerText = `${totalProfit.toFixed(2)} ฿`;
+            document.getElementById('kpi-orders').innerText = `${filteredSales.length}`;
+
+            // 4. Settings QR Preview
+            const qrPreview = document.getElementById('settings-qr-preview');
+            if(userData.qrCodeBase64) {
+                qrPreview.innerHTML = `<img src="${userData.qrCodeBase64}" alt="Payment QR Code">`;
+            } else {
+                qrPreview.innerHTML = `<span style="color:var(--text-muted); font-size:0.85rem;">${i18n[currentLang].qr_no_image}</span>`;
+            }
+
+            renderCart();
+        }
+    </script>
+</body>
+</html>
